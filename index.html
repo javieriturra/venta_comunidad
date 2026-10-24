@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Artículos en venta para la comunidad.">
+<title>Venta — Artículos disponibles</title>
+<style>
+:root { color-scheme: light; --ink:#20252b; --muted:#68717b; --line:#e4e7eb; --paper:#fff; --accent:#245b4a; --soft:#f4f7f5; }
+* { box-sizing:border-box; }
+body { margin:0; background:#f5f6f5; color:var(--ink); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+header { background:var(--paper); border-bottom:1px solid var(--line); padding:2.2rem 1rem 1.6rem; }
+.wrap { max-width:1100px; margin:0 auto; }
+.eyebrow { text-transform:uppercase; letter-spacing:.12em; color:var(--accent); font-size:.76rem; font-weight:700; }
+h1 { margin:.3rem 0 .4rem; font-size:clamp(2rem,5vw,3rem); letter-spacing:-.04em; line-height:1.1; }
+.intro { margin:0; color:var(--muted); }
+.toolbar { display:flex; gap:.8rem; align-items:center; flex-wrap:wrap; margin:1.2rem 0 1rem; }
+input[type=search] { flex:1 1 240px; padding:.8rem 1rem; border:1px solid #d5dadf; border-radius:10px; font:inherit; background:white; }
+button { padding:.8rem 1rem; border:0; border-radius:10px; font:inherit; font-weight:650; cursor:pointer; background:var(--accent); color:white; }
+button.secondary { background:white; color:var(--ink); border:1px solid #d5dadf; }
+.count { color:var(--muted); font-size:.9rem; margin-left:auto; }
+main { padding:1.2rem 1rem 3rem; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:1rem; }
+.card { background:white; border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; break-inside:avoid; }
+.gallery { background:var(--soft); }
+.photo { height:190px; background:var(--soft); display:flex; align-items:center; justify-content:center; overflow:hidden; color:#78847d; font-size:.9rem; position:relative; }
+.photo img { width:100%; height:100%; object-fit:cover; display:block; }
+.thumbnails { display:flex; gap:5px; padding:6px; overflow-x:auto; background:white; border-bottom:1px solid var(--line); }
+.thumb { flex:0 0 48px; width:48px; height:42px; padding:0; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:var(--soft); cursor:pointer; }
+.thumb img { display:block; width:100%; height:100%; object-fit:cover; }
+.thumb[aria-current="true"] { border:2px solid var(--accent); }
+.thumb-placeholder { flex:0 0 48px; width:48px; height:42px; display:grid; place-items:center; border:1px dashed #cbd3ce; border-radius:6px; color:#78847d; font-size:10px; }
+.details { padding:1rem; display:flex; flex:1; flex-direction:column; gap:.65rem; }
+h2 { font-size:1.05rem; line-height:1.35; margin:0; }
+.price { font-size:1.25rem; font-weight:750; color:var(--accent); margin-top:auto; }
+a { color:var(--accent); font-weight:600; text-decoration:none; }
+a:hover { text-decoration:underline; }
+footer { text-align:center; padding:1.5rem 1rem 2rem; color:var(--muted); font-size:.9rem; }
+.contact { margin-top:1.5rem; padding:1rem 1.2rem; background:white; border:1px solid var(--line); border-radius:12px; }
+.contact strong { color:var(--ink); }
+@media (max-width:560px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.65rem; } .photo { height:140px; } .thumb { flex-basis:38px; width:38px; height:34px; } .thumb-placeholder { flex-basis:38px; width:38px; height:34px; } .details { padding:.75rem; } h2 { font-size:.95rem; } .price { font-size:1.1rem; } }
+@media print {
+  body { background:white; font-size:11pt; }
+  header { padding:0 0 1rem; }
+  main { padding:1rem 0; }
+  .toolbar, footer .no-print { display:none !important; }
+  .grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:.5rem; }
+  .card { border:1px solid #ccc; border-radius:0; }
+  .photo { height:125px; print-color-adjust:exact; }
+  .thumbnails { gap:3px; padding:4px; }
+  .thumb { flex-basis:32px; width:32px; height:28px; }
+  .thumb-placeholder { flex-basis:32px; width:32px; height:28px; }
+  .details { padding:.6rem; gap:.35rem; }
+  h2 { font-size:10pt; }
+  .price { font-size:11pt; }
+  a { color:inherit; overflow-wrap:anywhere; }
+  .contact { margin-top:1rem; }
+  @page { size:A4; margin:14mm; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Venta · Comunidad</div>
+    <h1>Artículos disponibles</h1>
+    <p class="intro">Cosas en buen estado que estoy vendiendo. Escríbeme si te interesa algo.</p>
+  </div>
+</header>
+<main class="wrap">
+  <div class="toolbar">
+    <input id="search" type="search" placeholder="Buscar un artículo…" aria-label="Buscar un artículo">
+    <button class="secondary" id="clear">Limpiar búsqueda</button>
+    <button id="print">Exportar a PDF / Imprimir</button>
+    <span class="count" id="count"></span>
+  </div>
+  <section class="grid" id="items" aria-label="Artículos en venta"></section>
+  <section class="contact">
+    <strong>¿Te interesa algo?</strong>
+    <p style="margin:.35rem 0 0">Contáctame por <strong>[WhatsApp / teléfono / mensaje]</strong>. Puedes reemplazar este texto con tus datos antes de publicar.</p>
+  </section>
+</main>
+<footer><div class="wrap">Precios en pesos chilenos (CLP). Venta sujeta a disponibilidad.</div></footer>
+<script>
+const products = [
+  {
+    "name": "Cajonera Alex Color Petróleo IKEA",
+    "price": "$55.000",
+    "link": "https://www.ikea.com/cl/es/p/alex-cajonera-con-ruedas-gris-oscuro-20588891/#content",
+    "mainImage": "fotos/producto-01.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Cama Madera Lenga + Velador Lenga",
+    "price": "$240.000",
+    "link": "",
+    "mainImage": "fotos/producto-02.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Colchón 1 Plaza 90x200 CIC (Excelente Estado)",
+    "price": "$80.000",
+    "link": "https://www.cic.cl/colchon-1-plaza-smart-90x200/780642760424-0.html",
+    "mainImage": "fotos/producto-03.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Cómoda Madera Lenga",
+    "price": "$80.000",
+    "link": "",
+    "mainImage": "fotos/producto-04.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Escritorio Lagkapten/Adils Color Roble/Negro IKEA",
+    "price": "$25.000",
+    "link": "https://www.ikea.com/cl/es/p/lagkapten-adils-escritorio-efecto-roble-tinte-blanco-negro-s69416884/#content",
+    "mainImage": "fotos/producto-05.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Escritorio Portátil",
+    "price": "$15.000",
+    "link": "",
+    "mainImage": "fotos/producto-06.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Jarrito Moscow Mule x 4",
+    "price": "$16.000",
+    "link": "",
+    "mainImage": "fotos/producto-07.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Juego de Loza 16 Piezas Celeste",
+    "price": "$12.000",
+    "link": "https://www.lider.cl/ip/menaje-comedor/juego-de-loza-16-piezas-ceramica/00040000684902?utm_source=ofertitas.cl&utm_medium=referral&utm_campaign=product_link",
+    "mainImage": "fotos/producto-08.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Lámpara Sobremesa Metal",
+    "price": "$20.000",
+    "link": "",
+    "mainImage": "fotos/producto-09.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Maleta Viaje Talla M Gris",
+    "price": "$25.000",
+    "link": "",
+    "mainImage": "fotos/producto-10.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Mesa Centro Lenga Color Caramelo",
+    "price": "$50.000",
+    "link": "",
+    "mainImage": "fotos/producto-11.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Mesa Terraza Reyplast Modelo Tavarua (Con Cubierta Vidrio)",
+    "price": "$40.000",
+    "link": "https://www.lider.cl/ip/terrazas/mesa-de-terraza-cuadrada-reyplast-tavarua-tipo-ratan-con-agujero-para-sombrilla-marron-moro/00775006200989",
+    "mainImage": "fotos/producto-12.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Mesa Lateral Lack Color Negro IKEA",
+    "price": "$8.000",
+    "link": "https://www.ikea.com/cl/es/p/lack-mesa-lateral-negro-80104268/",
+    "mainImage": "fotos/producto-13.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Mesa Lateral Lenga Color Caramelo",
+    "price": "$30.000",
+    "link": "",
+    "mainImage": "fotos/producto-14.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Mesa Auxiliar Plegable Color Negro Mainstays",
+    "price": "$5.000",
+    "link": "",
+    "mainImage": "fotos/producto-15.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Mesa Auxiliar Plegable Color Blanco Mainstays",
+    "price": "$5.000",
+    "link": "",
+    "mainImage": "fotos/producto-16.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Cajonera Lennart IKEA",
+    "price": "$8.000",
+    "link": "https://www.ikea.com/cl/es/p/lennart-cajonera-blanco-30326177/",
+    "mainImage": "fotos/producto-17.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Monitor Portátil Arzopa Z1RC 2.5K",
+    "price": "$80.000",
+    "link": "https://global.arzopa.com/es-es/products/arzopa-z1rc-2k-portable-monitor-brilliant-qhd-500nits-8bit-display?srsltid=AYCX9vJe5aIA5lZz2YTQQr7kqMEJNK5LRJENHan9Y3eyZTNL9jAGJIdy",
+    "mainImage": "fotos/producto-18.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Monitores Studio Modelo BX5D3 M-Audio + Cable + Pedestales Escritorio Vondynote",
+    "price": "$250.000",
+    "link": "https://www.m-audio.com/monitors-headphones/bx5d3.html",
+    "mainImage": "fotos/producto-19.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Mug Marley Amarillo",
+    "price": "$4.000",
+    "link": "https://www.marleycoffee.cl/taza-marley-mug-amarillo/p",
+    "mainImage": "fotos/producto-20.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Mug Marley Negro",
+    "price": "$4.000",
+    "link": "https://www.marleycoffee.cl/taza-marley-mug-negro/p",
+    "mainImage": "fotos/producto-21.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Parlante JBL Partybox On-The-Go Essential",
+    "price": "$160.000",
+    "link": "https://www.jbl.cl/JBLPBOTGESBR2.html?gad_source=1&gad_campaignid=24063526687&gclid=Cj0KCQjwrvHWBhDKARIsABmp7h37h5Ueim_NLFS6vCVAsw7A1WwT-B-CTJXXa10oSfJWn8G3H5Deje4aAmn8EALw_wcB",
+    "mainImage": "fotos/producto-22.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Pisos Tolix Metal x 4",
+    "price": "$30.000",
+    "link": "",
+    "mainImage": "fotos/producto-23.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Reloj Mural Pugg IKEA",
+    "price": "$10.000",
+    "link": "https://www.ikea.com/cl/es/p/pugg-reloj-de-pared-acero-inoxidable-90540853/",
+    "mainImage": "fotos/producto-24.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Sitial Roble 1",
+    "price": "$100.000",
+    "link": "",
+    "mainImage": "fotos/producto-25.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Sitial Roble 2",
+    "price": "$100.000",
+    "link": "",
+    "mainImage": "fotos/producto-26.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Teclado Signature K650 Color Blanco Logitech",
+    "price": "$25.000",
+    "link": "https://www.logitech.com/es-ar/shop/p/k650-signature-wireless-keyboard.920-010964",
+    "mainImage": "fotos/producto-27.jpg",
+    "secondaryImages": []
+  },
+  {
+    "name": "Xbox Series S 512 GB White (Incluye Control) + Control Microsoft",
+    "price": "$240.000",
+    "link": "https://www.xbox.com/es-cl/consoles/xbox-series-s",
+    "mainImage": "fotos/producto-28.jpg",
+    "secondaryImages": []
+  }
+];
+const grid = document.querySelector('#items');
+const search = document.querySelector('#search');
+const count = document.querySelector('#count');
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function allImages(product) {
+  return [product.mainImage, ...(product.secondaryImages || [])].filter(Boolean);
+}
+function render() {
+  const query = search.value.trim().toLocaleLowerCase('es');
+  const filtered = products.filter(p => p.name.toLocaleLowerCase('es').includes(query));
+  grid.innerHTML = filtered.map((p, index) => {
+    const images = allImages(p);
+    const galleryId = `gallery-${products.indexOf(p)}`;
+    const mainImage = images[0];
+    const photoContent = mainImage
+      ? `<img class="main-photo" src="${escapeHtml(mainImage)}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.photo-empty').hidden=false;">`
+      : '';
+    const thumbs = images.length > 1
+      ? `<div class="thumbnails" aria-label="Fotos secundarias">${images.map((src, i) => `
+          <button class="thumb" type="button" data-gallery="${galleryId}" data-image="${escapeHtml(src)}" data-alt="${escapeHtml(p.name)}" aria-label="Ver foto ${i+1}" aria-current="${i === 0 ? 'true' : 'false'}">
+            <img src="${escapeHtml(src)}" alt="" loading="lazy">
+          </button>`).join('')}</div>`
+      : '';
+    return `
+    <article class="card">
+      <div class="gallery" id="${galleryId}">
+        <div class="photo">
+          ${photoContent}
+          <span class="photo-empty" ${mainImage ? 'hidden' : ''}>Foto principal por agregar</span>
+        </div>
+        ${thumbs}
+      </div>
+      <div class="details">
+        <h2>${escapeHtml(p.name)}</h2>
+        <div class="price">${escapeHtml(p.price)}</div>
+        ${p.link ? `<a href="${escapeHtml(p.link)}" target="_blank" rel="noopener noreferrer">Ver referencia del producto ↗</a>` : ''}
+      </div>
+    </article>`;
+  }).join('');
+  count.textContent = `${filtered.length} artículo${filtered.length === 1 ? '' : 's'}`;
+}
+grid.addEventListener('click', event => {
+  const button = event.target.closest('.thumb');
+  if (!button) return;
+  const gallery = document.getElementById(button.dataset.gallery);
+  if (!gallery) return;
+  const main = gallery.querySelector('.main-photo');
+  const empty = gallery.querySelector('.photo-empty');
+  if (main) {
+    main.src = button.dataset.image;
+    main.style.display = 'block';
+    main.alt = button.dataset.alt || '';
+    if (empty) empty.hidden = true;
+  }
+  gallery.querySelectorAll('.thumb').forEach(thumb => thumb.setAttribute('aria-current', thumb === button ? 'true' : 'false'));
+});
+search.addEventListener('input', render);
+document.querySelector('#clear').addEventListener('click', () => { search.value=''; render(); });
+document.querySelector('#print').addEventListener('click', () => window.print());
+render();
+</script>
+</body>
+</html>
